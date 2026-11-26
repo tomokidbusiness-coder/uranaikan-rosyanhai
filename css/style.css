@@ -24,7 +24,7 @@ body{
   -webkit-font-smoothing:antialiased;word-wrap:break-word;
 }
 /* 星空はページ全体で1枚(つなぎ目が出ないよう画面に固定) */
-body::before{content:"";position:fixed;inset:0;z-index:-1;background:var(--deep) var(--star) center/cover no-repeat}
+body::before{content:"";position:fixed;inset:0;z-index:-1;background:linear-gradient(rgba(3,4,45,.5),rgba(3,4,45,.5)),var(--deep) var(--star) center/cover no-repeat}
 img{max-width:100%;display:block}
 a{color:inherit}
 ul,ol{list-style:none}
@@ -289,3 +289,16 @@ main section{padding:56px 0}
 .service-card{text-align:center;max-width:640px;margin:0 auto}
 .service-card img{margin:0 auto 14px;width:100%}
 .service-card h3{font-size:1.15rem;margin-bottom:8px}
+
+/* ---------- 星空の上の文字を読みやすく ---------- */
+.feature-area,#flow .wrap,.page-head .wrap,.teacher-summary .profile > div:last-child,.tv-list figcaption{
+  text-shadow:0 1px 3px rgba(0,0,0,.9),0 0 12px rgba(3,4,45,.9);
+}
+.section-title,.btn-note,.photo-row figcaption,.table caption{text-shadow:0 1px 3px rgba(0,0,0,.9),0 0 12px rgba(3,4,45,.9)}
+.feature-area,#flow .wrap{
+  background:rgba(3,4,45,.62);border:1px solid rgba(255,255,255,.18);border-radius:var(--radius);
+  padding:6px 18px 24px;backdrop-filter:blur(3px);-webkit-backdrop-filter:blur(3px);
+}
+#flow .wrap{padding:6px 18px 30px;max-width:640px}
+.teacher-summary .profile > div:last-child{background:rgba(3,4,45,.55);border-radius:var(--radius);padding:10px 16px 20px}
+.card,.step,.teacher-card,.prose,.table,.others a,.info-list,.map,.btn{text-shadow:none}
