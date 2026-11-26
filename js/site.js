@@ -1,5 +1,5 @@
 /* 占い館 老上海 HP試作 — 今のHPと同じ演出(jQueryなし)
-   1. Loading...(セッション中の最初の1回だけ)→ 2. 紫の扉が中央から開く → 3. 文字が光りながら出現
+   1. 紫の扉が中央から開く(Loading画面はなし) 2. → 3. 文字が光りながら出現
    4. スクロールで「じわっ」と出現 5. ハンバーガーメニュー(背景ぼかし) 6. トップ写真がスクロールで拡大 */
 (function () {
   "use strict";
@@ -56,21 +56,8 @@
     startGlow();
     startBlur();
   }
-  var splash = document.getElementById("splash");
-  var seen = false;
-  try { seen = sessionStorage.getItem("rsh-splash") === "1"; sessionStorage.setItem("rsh-splash", "1"); } catch (e) {}
-  if (reduce) {
-    body.classList.add("no-motion");
-    splash.style.display = "none";
-    appear();
-  } else if (seen) {
-    splash.style.display = "none";
-    appear();
-  } else {
-    body.classList.add("splashing");
-    setTimeout(function () { splash.classList.add("fade"); }, 1200);
-    setTimeout(function () { splash.style.display = "none"; appear(); }, 1700);
-  }
+  if (reduce) { body.classList.add("no-motion"); }
+  appear();
 
   /* ---------- ハンバーガーメニュー ---------- */
   var btn = document.querySelector(".openbtn");
@@ -90,19 +77,26 @@
   nav.querySelectorAll("a").forEach(function (a) { a.addEventListener("click", function () { setMenu(false); }); });
   document.addEventListener("keydown", function (e) { if (e.key === "Escape") setMenu(false); });
 
-  /* ---------- トップ写真がスクロールで拡大 ---------- */
+  /* ---------- トップ写真:スクロールで拡大しながら薄くなる ---------- */
   var headerImg = document.getElementById("header-img");
-  if (headerImg && !reduce) {
+  var headerArea = document.querySelector(".header-area");
+  if (headerImg) {
     var ticking = false;
-    window.addEventListener("scroll", function () {
-      if (ticking) return;
-      ticking = true;
-      requestAnimationFrame(function () {
-        var y = window.scrollY;
+    var update = function () {
+      var y = window.scrollY, h = window.innerHeight;
+      var fade = Math.max(0, 1 - y / h);
+      if (!reduce) {
         headerImg.style.transform = "scale(" + (100 + y / 10) / 100 + ")";
         headerImg.style.top = -(y / 50) + "%";
-        ticking = false;
-      });
+      }
+      headerImg.style.opacity = fade;
+      if (headerArea) headerArea.style.opacity = Math.max(0, 1 - y / (h * 0.6));
+      headerImg.style.visibility = fade <= 0 ? "hidden" : "visible";
+      ticking = false;
+    };
+    window.addEventListener("scroll", function () {
+      if (!ticking) { ticking = true; requestAnimationFrame(update); }
     }, { passive: true });
+    update();
   }
 })();

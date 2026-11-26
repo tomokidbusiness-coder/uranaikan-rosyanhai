@@ -19,10 +19,12 @@ html{scroll-behavior:smooth}
 body{
   font-family:"Shippori Mincho B1",serif;
   color:var(--white);
-  background:var(--deep) var(--star) repeat;background-size:contain;
+  background:var(--deep);
   font-size:16px;line-height:1.85;letter-spacing:.12em;
   -webkit-font-smoothing:antialiased;word-wrap:break-word;
 }
+/* 星空はページ全体で1枚(つなぎ目が出ないよう画面に固定) */
+body::before{content:"";position:fixed;inset:0;z-index:-1;background:var(--deep) var(--star) center/cover no-repeat}
 img{max-width:100%;display:block}
 a{color:inherit}
 ul,ol{list-style:none}
@@ -31,14 +33,6 @@ ul,ol{list-style:none}
 .serif{font-family:"Shippori Mincho B1",serif}
 
 /* ---------- Loading と扉(今のHPと同じ) ---------- */
-#splash{display:none}
-html.js body.splashing #splash{
-  display:block;position:fixed;inset:0;z-index:9999999;text-align:center;color:#fff;
-  background:var(--deep) var(--star) center/cover;transition:opacity .5s;
-}
-#splash.fade{opacity:0}
-#splash-logo{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%)}
-#splash-logo p{font-family:"Cormorant Upright",serif;font-size:1.8rem;white-space:nowrap;letter-spacing:.2em}
 .slide-in{overflow:hidden;display:inline-block;padding:0 10px;animation:slideText-100 .8s forwards;opacity:0}
 .slide-in_inner{display:inline-block;animation:slideText100 .8s forwards;opacity:0}
 @keyframes slideText-100{from{transform:translateX(-100%);opacity:0}to{transform:translateX(0);opacity:1}}
@@ -112,7 +106,7 @@ html.js .blurTrigger.blur{animation:blurAnime 1s forwards}
 }
 /* 写真より手前に出す */
 main,.site-footer{position:relative;z-index:3}
-main > section{position:relative;z-index:3;background:var(--deep) var(--star) repeat;background-size:contain}
+.page-body{position:relative;z-index:3}
 .site-footer{padding-bottom:calc(var(--fixed-h) + 30px + env(safe-area-inset-bottom))}
 
 /* ---------- ボタン ---------- */
@@ -250,3 +244,48 @@ main section{padding:56px 0}
 .footer-info{display:inline-grid;grid-template-columns:auto auto;gap:2px 14px;margin-bottom:18px;text-align:left}
 .footer-links{display:flex;flex-wrap:wrap;justify-content:center;gap:4px 16px;margin-bottom:18px;line-height:2.4}
 .copy{font-size:.7rem}
+
+/* ---------- トップ:今のHPと同じ「写真+見出し+文章+ボタン」 ---------- */
+.feature-inner{display:flex;flex-direction:column;gap:22px;align-items:center}
+.feature-img{width:100%;border-radius:var(--radius);overflow:hidden;box-shadow:10px 10px 0 rgba(0,0,0,.1)}
+.feature-img img{width:100%}
+.feature-img.fit-cover img{height:min(80vw,400px);object-fit:cover;object-position:top}
+.feature-area{text-align:center;width:100%}
+.feature-title{position:relative;display:inline-block;font-size:1.1rem;font-weight:500;padding:1rem .5rem;margin-bottom:10px}
+.feature-title::after{content:"";position:absolute;left:0;right:0;bottom:0;height:3px;border-radius:3px;background:linear-gradient(90deg,#fff,#dadada);box-shadow:3px 3px 0 rgba(0,0,0,.1)}
+.feature-area p{margin:16px 0 26px;font-size:.98rem}
+@media (min-width:769px){
+  .feature-inner{flex-direction:row;justify-content:space-between}
+  .feature:nth-of-type(even) .feature-inner{flex-direction:row-reverse}
+  .feature-img{width:58%}
+  .feature-area{width:38%}
+  .feature-title{font-size:1.3rem}
+}
+.feature.pair{padding-top:0}
+.center{text-align:center}
+
+/* TV出演歴 */
+.tv-list{display:grid;gap:20px}
+.tv-list figcaption{text-align:center;font-size:1.1rem;margin-bottom:10px}
+.tv-small{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;margin-top:24px}
+.tv-list img,.tv-small img{width:100%;box-shadow:var(--shadow)}
+@media (min-width:769px){.tv-list{grid-template-columns:1fr 1fr}.tv-small{grid-template-columns:repeat(3,minmax(0,1fr))}}
+
+/* 行動指針(今のHPと同じ紫のカード) */
+.guide-list{display:grid;gap:22px}
+.guide-list section{background:linear-gradient(180deg,rgba(83,0,116,1),rgba(3,4,69,1));box-shadow:var(--shadow);border-radius:var(--radius);padding:20px 20px 36px;text-align:center}
+.guide-list h3{font-size:1.7rem;font-weight:500;margin-top:10px}
+.guide-list p{font-size:1rem;margin-top:22px}
+@media (min-width:769px){.guide-list{grid-template-columns:repeat(3,minmax(0,1fr))}}
+
+/* 人気の鑑定内容 */
+.menu-list{display:grid;gap:16px}
+.menu-item{position:relative;overflow:hidden}
+.menu-item img{width:100%}
+.menu-item figcaption{position:absolute;left:0;bottom:0;width:100%;background:var(--navy);color:#fff;padding:10px;font-size:.85rem;text-align:center}
+@media (min-width:769px){.menu-list{grid-template-columns:repeat(3,minmax(0,1fr))}}
+
+/* 1階の中華 */
+.service-card{text-align:center;max-width:640px;margin:0 auto}
+.service-card img{margin:0 auto 14px;width:100%}
+.service-card h3{font-size:1.15rem;margin-bottom:8px}
