@@ -1,170 +1,252 @@
-/* 占い館 老上海 HP試作 */
+/* 占い館 老上海 HP試作 — 今のHP(uranaikan-rosyanhai.com)のデザインを踏襲 */
 :root{
-  --night:#141238;      /* 夜空の紺 */
-  --night-2:#211c52;
-  --violet:#5b3fa8;
-  --gold:#c9a24a;
-  --gold-soft:#efe2bb;
-  --paper:#faf7f1;
+  --navy:#0b0a67;
+  --deep:#030445;
+  --gold:#ffde00;
   --white:#fff;
-  --ink:#24213a;
-  --ink-soft:#5d5974;
-  --line:#e6e0d3;
+  --ink:#555;
+  --ink-dark:#222;
   --line-green:#06c755;
   --line-green-dark:#05a648;
-  --radius:14px;
-  --fixed-h:64px;
+  --radius:10px;
+  --shadow:5px 5px 0 rgba(0,0,0,.1);
+  --fixed-h:60px;
+  --star:url("https://uranaikan-rosyanhai.com/img/bg_star.jpg");
+  --door:linear-gradient(180deg,rgba(135,57,218,1),rgba(3,4,69,1));
 }
 *{box-sizing:border-box;margin:0;padding:0}
-html{scroll-behavior:smooth;scroll-padding-top:110px}
+html{scroll-behavior:smooth}
 body{
-  font-family:"Zen Kaku Gothic New",system-ui,sans-serif;
-  color:var(--ink);background:var(--paper);
-  font-size:16px;line-height:1.9;-webkit-font-smoothing:antialiased;
-  padding-bottom:calc(var(--fixed-h) + 24px + env(safe-area-inset-bottom));
+  font-family:"Shippori Mincho B1",serif;
+  color:var(--white);
+  background:var(--deep) var(--star) repeat;background-size:contain;
+  font-size:16px;line-height:1.85;letter-spacing:.12em;
+  -webkit-font-smoothing:antialiased;word-wrap:break-word;
 }
 img{max-width:100%;display:block}
-a{color:var(--violet)}
+a{color:inherit}
 ul,ol{list-style:none}
-:focus-visible{outline:3px solid var(--gold);outline-offset:3px;border-radius:6px}
-.wrap{width:min(100% - 32px,960px);margin-inline:auto}
-.serif{font-family:"Shippori Mincho",serif}
+:focus-visible{outline:3px solid var(--gold);outline-offset:3px;border-radius:4px}
+.wrap{width:min(100% - 40px,1000px);margin-inline:auto}
+.serif{font-family:"Shippori Mincho B1",serif}
+
+/* ---------- Loading と扉(今のHPと同じ) ---------- */
+#splash{display:none}
+html.js body.splashing #splash{
+  display:block;position:fixed;inset:0;z-index:9999999;text-align:center;color:#fff;
+  background:var(--deep) var(--star) center/cover;transition:opacity .5s;
+}
+#splash.fade{opacity:0}
+#splash-logo{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%)}
+#splash-logo p{font-family:"Cormorant Upright",serif;font-size:1.8rem;white-space:nowrap;letter-spacing:.2em}
+.slide-in{overflow:hidden;display:inline-block;padding:0 10px;animation:slideText-100 .8s forwards;opacity:0}
+.slide-in_inner{display:inline-block;animation:slideText100 .8s forwards;opacity:0}
+@keyframes slideText-100{from{transform:translateX(-100%);opacity:0}to{transform:translateX(0);opacity:1}}
+@keyframes slideText100{from{transform:translateX(100%);opacity:0}to{transform:translateX(0);opacity:1}}
+
+.splashbg1,.splashbg2{display:none}
+html.js body.appear:not(.no-motion) .splashbg1,
+html.js body.appear:not(.no-motion) .splashbg2{
+  display:block;position:fixed;z-index:999;top:0;width:100%;height:100vh;
+  background-image:var(--door);pointer-events:none;
+  animation-duration:1.2s;animation-timing-function:ease-in-out;animation-fill-mode:forwards;
+}
+html.js body.appear .splashbg1{left:50%;animation-name:PageAnime}
+html.js body.appear .splashbg2{right:50%;animation-name:PageAnime2}
+@keyframes PageAnime{0%{transform-origin:left;transform:scaleX(1)}50%{transform-origin:right}100%{transform-origin:right;transform:scaleX(0)}}
+@keyframes PageAnime2{0%{transform-origin:right;transform:scaleX(1)}50%{transform-origin:left}100%{transform-origin:left;transform:scaleX(0)}}
+
+html.js #wrapper{opacity:0}
+html.js body.appear #wrapper{animation:PageAnimeAppear 1s .2s forwards}
+html.js body.appear.no-motion #wrapper{animation:none;opacity:1}
+@keyframes PageAnimeAppear{from{opacity:0}to{opacity:1}}
+
+/* ---------- 光りながら出現 / じわっと出現 ---------- */
+html.js .glowAnime .g{opacity:0}
+html.js .glowAnime.glow .g{animation:glow_anime_on 1s ease-out forwards}
+@keyframes glow_anime_on{0%{opacity:0;text-shadow:0 0 0 #fff,0 0 0 #fff}50%{opacity:1;text-shadow:0 0 10px #fff,0 0 15px #fff}100%{opacity:1;text-shadow:0 0 0 #fff,0 0 0 #fff}}
+html.js .blurTrigger{opacity:0}
+html.js .blurTrigger.blur{animation:blurAnime 1s forwards}
+@keyframes blurAnime{from{filter:blur(10px);transform:scale(1.02);opacity:0}to{filter:blur(0);transform:scale(1);opacity:1}}
+.no-motion .glowAnime .g,.no-motion .blurTrigger{opacity:1!important;animation:none!important}
+
+/* ---------- ハンバーガーメニュー ---------- */
+.openbtn{position:fixed;z-index:9999;top:34px;right:10px;cursor:pointer;width:50px;height:50px}
+.openbtn span{display:inline-block;transition:all .4s;position:absolute;left:13px;height:3px;background:#fff;box-shadow:0 0 4px rgba(0,0,0,.5)}
+.openbtn span:nth-of-type(1){top:22px;width:50%}
+.openbtn span:nth-of-type(2){top:29px;width:30%}
+.openbtn span:nth-of-type(3){display:none}
+.openbtn.active span:nth-of-type(1){top:20px;left:16px;transform:translateY(6px) rotate(-45deg);width:35%}
+.openbtn.active span:nth-of-type(2){top:32px;left:16px;transform:translateY(-6px) rotate(45deg);width:35%}
+#g-nav{position:fixed;z-index:-1;opacity:0;inset:0;background:var(--door);transition:all .3s;visibility:hidden}
+#g-nav.panelactive{opacity:1;z-index:9998;visibility:visible}
+#g-nav-list{position:absolute;inset:0;overflow:auto;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:40px 0}
+.g-nav-title{font-size:1.5rem;margin-bottom:20px;letter-spacing:.2em}
+#g-nav li{text-align:center}
+#g-nav li a{color:#fff;text-decoration:none;padding:10px;display:block;letter-spacing:.1em;font-weight:500}
+#g-nav li a[aria-current="page"]{text-decoration:underline;text-underline-offset:6px}
+.mainblur{filter:blur(8px)}
 
 /* ---------- 試作の帯 ---------- */
 .proto-banner{
+  position:relative;z-index:5;
   background:repeating-linear-gradient(-45deg,#fff3c4 0 12px,#ffeaa0 12px 24px);
-  color:#5a4300;font-size:12.5px;font-weight:700;text-align:center;padding:6px 12px;line-height:1.5;
+  color:#5a4300;font-family:system-ui,sans-serif;letter-spacing:0;
+  font-size:12.5px;font-weight:700;text-align:center;padding:6px 12px;line-height:1.5;
 }
 
-/* ---------- ヘッダー ---------- */
-.site-header{position:sticky;top:0;z-index:20;background:var(--night);color:var(--white);box-shadow:0 2px 12px rgba(0,0,0,.25)}
-.header-inner{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:10px 0 6px}
-.logo{color:var(--white);text-decoration:none;font-family:"Shippori Mincho",serif;font-weight:800;font-size:22px;line-height:1.2;letter-spacing:.06em}
-.logo small{display:block;font-family:"Zen Kaku Gothic New",sans-serif;font-weight:400;font-size:11px;letter-spacing:.12em;color:var(--gold-soft)}
-.header-line{display:inline-flex;align-items:center;gap:6px;background:var(--line-green);color:#fff;text-decoration:none;font-weight:700;font-size:14px;padding:8px 14px;border-radius:999px;white-space:nowrap}
-.site-nav{border-top:1px solid rgba(255,255,255,.12)}
-.site-nav ul{display:flex;gap:4px;overflow-x:auto;scrollbar-width:none;padding:2px 0}
-.site-nav ul::-webkit-scrollbar{display:none}
-.site-nav a{display:block;color:#dcd8f5;text-decoration:none;font-size:14px;padding:8px 12px;white-space:nowrap;border-bottom:2px solid transparent}
-.site-nav a[aria-current="page"]{color:var(--white);border-bottom-color:var(--gold);font-weight:700}
+/* ---------- トップの大きな写真(今のHPと同じ) ---------- */
+#header{position:relative;width:100%;height:100vh;overflow:hidden}
+#header-img{
+  position:fixed;z-index:1;top:0;left:0;width:100%;height:100vh;transform-origin:center;
+  background:url("https://uranaikan-rosyanhai.com/img/topmain.jpg") no-repeat top center;background-size:cover;
+}
+.header-area{position:fixed;left:50%;top:50%;transform:translate(-50%,-50%);z-index:2;color:#fff;text-align:center;white-space:nowrap}
+.header-area p{font-size:.8rem;letter-spacing:.4em;margin:0 0 5px}
+.header-area h1{font-size:3.5rem;font-weight:500;line-height:1.1;letter-spacing:.2em;margin:16px 0 10px;padding-left:.2em}
+.header-area h2{font-size:1.5rem;letter-spacing:.2em;padding-left:.2em;font-weight:800}
+@media (min-width:769px){
+  .header-area p{font-size:1.1rem}
+  .header-area h1{font-size:5.5rem}
+  .header-area h2{font-size:2rem}
+}
+/* 写真より手前に出す */
+main,.site-footer{position:relative;z-index:3}
+main > section{position:relative;z-index:3;background:var(--deep) var(--star) repeat;background-size:contain}
+.site-footer{padding-bottom:calc(var(--fixed-h) + 30px + env(safe-area-inset-bottom))}
 
 /* ---------- ボタン ---------- */
 .line-icon{width:1.3em;height:1.3em;flex:none}
-.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;text-decoration:none;font-weight:700;border-radius:999px;padding:14px 26px;font-size:17px;line-height:1.3;text-align:center}
-.btn-line{background:var(--line-green);color:#fff;box-shadow:0 4px 0 var(--line-green-dark)}
-.btn-line:active{transform:translateY(2px);box-shadow:0 2px 0 var(--line-green-dark)}
-.btn-sub{background:transparent;color:inherit;border:2px solid currentColor}
-.btn-online{background:var(--violet);color:#fff;box-shadow:0 4px 0 #43307c}
-.btn-row{display:flex;flex-wrap:wrap;gap:12px;align-items:center}
-.btn-note{font-size:14px;color:var(--ink-soft);margin-top:10px}
-
+.btn{
+  position:relative;display:inline-flex;align-items:center;justify-content:center;gap:8px;
+  min-width:250px;padding:12px 30px;border-radius:5px;text-decoration:none;font-weight:500;
+  font-size:1rem;line-height:1.4;text-align:center;letter-spacing:.1em;transition:background .3s,border-color .3s;
+}
+.btn-sub{color:#fff;border:2px solid #ccc}
+.btn-sub:hover{background:var(--navy);border-color:var(--navy)}
+.btn-line{background:var(--line-green);color:#fff;border:2px solid var(--line-green)}
+.btn-line:hover{background:var(--line-green-dark)}
+.btn-online{background:var(--navy);color:#fff;border:2px solid #ccc}
+.btn-row{display:flex;flex-wrap:wrap;gap:14px;align-items:center;justify-content:center}
+.btn-note{font-size:.85rem;margin-top:12px;text-align:center}
 .line-fixed{
   position:fixed;z-index:30;left:50%;transform:translateX(-50%);
   bottom:calc(12px + env(safe-area-inset-bottom));
   width:min(100% - 24px,420px);height:var(--fixed-h);
   display:flex;align-items:center;justify-content:center;gap:10px;
-  background:var(--line-green);color:#fff;text-decoration:none;font-weight:700;font-size:18px;
-  border-radius:999px;box-shadow:0 6px 20px rgba(0,0,0,.25);
+  background:var(--line-green);color:#fff;text-decoration:none;font-weight:800;font-size:1.05rem;letter-spacing:.1em;
+  border-radius:999px;box-shadow:0 6px 20px rgba(0,0,0,.35);
 }
+html.js body:not(.appear) .line-fixed{opacity:0}
 
 /* ---------- セクション共通 ---------- */
-section{padding:56px 0}
-.section-title{font-family:"Shippori Mincho",serif;font-weight:800;font-size:clamp(24px,6vw,32px);line-height:1.4;margin-bottom:8px}
-.section-title + .lead{color:var(--ink-soft);margin-bottom:28px}
-.eyebrow{display:block;font-size:12px;letter-spacing:.2em;color:var(--gold);font-weight:700;margin-bottom:4px}
-.bg-night{background:linear-gradient(180deg,var(--night),var(--night-2));color:var(--white)}
-.bg-night .section-title + .lead{color:#cfcae8}
-.bg-night a:not(.btn){color:var(--gold-soft)}
-.bg-white{background:var(--white)}
-.card{background:var(--white);border:1px solid var(--line);border-radius:var(--radius);padding:22px}
-.note{font-size:14px;color:var(--ink-soft)}
-.page-head{background:linear-gradient(180deg,var(--night),var(--night-2));color:#fff;padding:36px 0 32px}
-.page-head .section-title{margin:0}
-.page-head p{color:#cfcae8;margin-top:6px}
-
-/* ---------- ヒーロー ---------- */
-.hero{
-  position:relative;overflow:hidden;color:#fff;padding:56px 0 64px;
-  background:
-    radial-gradient(circle at 20% 20%,rgba(255,255,255,.9) 0 1px,transparent 1.5px) 0 0/90px 90px,
-    radial-gradient(circle at 70% 60%,rgba(255,255,255,.6) 0 1px,transparent 1.5px) 0 0/130px 130px,
-    radial-gradient(ellipse at 80% 0%,rgba(140,90,220,.55),transparent 60%),
-    linear-gradient(180deg,#0f0d2e,#2a1f63);
+main section{padding:56px 0}
+.section-title{
+  position:relative;display:block;text-align:center;font-weight:500;
+  font-size:1.4rem;line-height:1.5;padding:1rem .5rem;margin:0 auto 28px;max-width:640px;
 }
-.hero h1{font-family:"Shippori Mincho",serif;font-weight:800;font-size:clamp(26px,7.4vw,48px);line-height:1.35;letter-spacing:.04em;margin:8px 0 14px}
-.hero h1 em{font-style:normal;color:var(--gold)}
-.hero p{color:#ddd8f3}
-.hero .price-tag{display:inline-block;margin:18px 0 22px;border:1px solid var(--gold);color:var(--gold-soft);border-radius:999px;padding:4px 16px;font-size:15px}
-.hero .btn-sub{color:#fff}
+.section-title::after{
+  content:"";position:absolute;left:0;right:0;bottom:0;height:3px;border-radius:3px;
+  background:linear-gradient(90deg,#fff,#dadada);box-shadow:3px 3px 0 rgba(0,0,0,.1);
+}
+.section-title + .lead{margin:-12px 0 28px;text-align:center;font-size:.95rem}
+.eyebrow{display:block;text-align:center;font-family:"Cormorant Upright",serif;font-size:.95rem;letter-spacing:.3em;opacity:.85}
+.note{font-size:.85rem;opacity:.9}
+.page-head{padding:110px 0 20px;text-align:center}
+.page-head .section-title{font-size:1.6rem}
+.page-head p{font-size:.95rem}
+.price-tag{display:inline-block;border:1px solid #ccc;border-radius:5px;padding:4px 16px;font-size:.95rem}
+
+/* 白いカード(今のHPの在籍占い師・紹介文と同じ) */
+.card,.step,.teacher-card,.prose,.table,.others a,.info-list,.map{
+  background:#fff;color:var(--ink);border-radius:var(--radius);box-shadow:var(--shadow);
+}
+.card{display:block;padding:20px}
+.card .serif,.card h3{color:var(--ink-dark)}
+.card .eyebrow{color:var(--ink)}
+.card .note{color:var(--ink)}
+.card a{color:var(--navy)}
+
+/* ---------- トップ:最初のボタン ---------- */
+.intro{text-align:center}
+.intro .price-tag{margin-bottom:22px}
 
 /* ---------- 予約の流れ ---------- */
-.steps{display:grid;gap:16px;counter-reset:step}
-.step{background:var(--white);color:var(--ink);border-radius:var(--radius);padding:20px;border:1px solid var(--line);position:relative}
-.step h3{font-size:18px;line-height:1.5;display:flex;gap:10px;align-items:flex-start;margin-bottom:6px}
-.step h3::before{counter-increment:step;content:counter(step);flex:none;width:32px;height:32px;border-radius:50%;background:var(--violet);color:#fff;display:grid;place-items:center;font-size:16px}
-.step p{font-size:15px}
-.step strong{background:linear-gradient(transparent 60%,var(--gold-soft) 60%)}
-.step img{margin-top:12px;border-radius:10px;border:1px solid var(--line);width:100%;max-width:340px}
-@media (min-width:760px){.steps{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.steps{display:grid;gap:18px;counter-reset:step}
+.step{padding:20px;color:var(--ink-dark)}
+.step h3{font-size:1.05rem;line-height:1.5;display:flex;gap:10px;align-items:flex-start;margin-bottom:8px;font-weight:800}
+.step h3::before{counter-increment:step;content:counter(step);flex:none;width:30px;height:30px;border-radius:50%;background:var(--navy);color:#fff;display:grid;place-items:center;font-size:.95rem;letter-spacing:0}
+.step p{font-size:.92rem;color:var(--ink)}
+.step strong{color:var(--navy)}
+.step img{margin:12px auto 0;border-radius:8px;border:1px solid #ddd;width:100%;max-width:340px}
+@media (min-width:769px){.steps{grid-template-columns:repeat(2,minmax(0,1fr))}}
 
-/* ---------- 先生カード ---------- */
-.teacher-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
-@media (min-width:760px){.teacher-grid{grid-template-columns:repeat(4,minmax(0,1fr))}}
-.teacher-card{display:flex;flex-direction:column;background:var(--white);border-radius:var(--radius);overflow:hidden;text-decoration:none;color:var(--ink);border:1px solid var(--line);box-shadow:0 2px 8px rgba(30,20,70,.06)}
-.teacher-card .photo{aspect-ratio:1/1;background:#e9e4f5;position:relative}
-.teacher-card .photo img{width:100%;height:100%;object-fit:cover}
-.teacher-card .body{padding:10px 12px 14px;display:flex;flex-direction:column;gap:4px;flex:1}
-.teacher-card .name{font-weight:700;font-size:16px;line-height:1.4}
-.teacher-card .catch{font-size:12px;color:var(--violet)}
-.teacher-card .specialties{font-size:12px;color:var(--ink-soft);line-height:1.6}
-.labels{position:absolute;top:8px;left:8px;display:flex;flex-wrap:wrap;gap:4px}
-.label{font-size:11px;font-weight:700;padding:2px 8px;border-radius:999px;background:var(--gold);color:#2a1f00;line-height:1.6}
-.label-online{background:var(--violet);color:#fff}
-.label-new{background:#e0475b;color:#fff}
+/* ---------- 在籍占い師(今のHPと同じカード) ---------- */
+.teacher-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:26px 14px}
+@media (min-width:769px){.teacher-grid{grid-template-columns:repeat(3,minmax(0,1fr));gap:40px 30px}}
+.teacher-card{position:relative;display:flex;flex-direction:column;padding:10px 10px 18px;text-decoration:none}
+.teacher-card .photo{display:block;aspect-ratio:1/1;overflow:hidden;background:#eee}
+.teacher-card .photo img{width:100%;height:100%;object-fit:cover;object-position:top}
+.teacher-card .body{display:flex;flex-direction:column;align-items:center;text-align:center;gap:6px;flex:1;padding-top:14px}
+.teacher-card .name{font-size:.95rem;font-weight:800;color:var(--ink-dark)}
+.teacher-card .catch{font-size:.72rem;color:var(--ink)}
+.teacher-card .specialties{font-size:.72rem;color:var(--ink);line-height:1.7}
+.teacher-card .more{margin-top:auto;display:block;width:80%;background:var(--navy);color:#fff;border-radius:8px;font-size:.72rem;padding:7px;text-align:center}
+.labels{position:absolute;left:-5px;top:-5px;z-index:2;display:flex;flex-direction:column;align-items:flex-start;gap:3px}
+.label{display:inline-block;padding:3px 6px;font-size:.75rem;line-height:1.3;background:var(--navy);color:#fff;letter-spacing:.05em}
+.label-online{background:var(--gold);color:var(--navy)}
+.label-new{background:var(--navy);color:#fff}
 
 /* ---------- 先生ページ ---------- */
-.profile{display:grid;gap:20px;align-items:start}
-@media (min-width:760px){.profile{grid-template-columns:280px 1fr}}
-.profile .photo{border-radius:var(--radius);overflow:hidden;background:#e9e4f5;width:min(56vw,220px);aspect-ratio:3/4}
+.teacher-summary{padding-top:100px!important;text-align:center}
+.profile{display:flex;flex-direction:column;align-items:center;gap:18px}
+.profile .photo{width:min(62vw,260px);aspect-ratio:3/4;overflow:hidden;border-radius:var(--radius);box-shadow:var(--shadow);background:#eee}
 .profile .photo img{width:100%;height:100%;object-fit:cover;object-position:top}
-@media (min-width:760px){.profile .photo{width:100%;max-width:280px}}
-.profile .kana{font-size:14px;color:#cfcae8;letter-spacing:.1em}
-.profile h1{font-family:"Shippori Mincho",serif;font-weight:800;font-size:clamp(26px,7vw,36px);line-height:1.3}
-.profile .catch{color:var(--gold-soft);margin-top:4px}
-.chips{display:flex;flex-wrap:wrap;gap:6px;margin:12px 0}
-.chip{font-size:13px;border:1px solid rgba(255,255,255,.35);border-radius:999px;padding:2px 10px}
-.price{font-size:15px;margin-bottom:14px}
-.price b{font-size:20px;color:var(--gold-soft)}
-.prose p{margin-bottom:1.2em}
-.prose{max-width:720px}
-.others{display:flex;flex-wrap:wrap;gap:8px}
-.others a{font-size:14px;border:1px solid var(--line);background:var(--white);border-radius:999px;padding:4px 12px;text-decoration:none;color:var(--ink)}
+.profile .kana{font-size:.9rem;letter-spacing:.2em}
+.profile h1{font-size:1.7rem;font-weight:500;line-height:1.4}
+.profile .catch{margin-top:4px}
+.chips{display:flex;flex-wrap:wrap;justify-content:center;gap:6px;margin:14px 0}
+.chip{font-size:.8rem;border:1px solid #ccc;border-radius:5px;padding:2px 10px}
+.price{font-size:.95rem;margin-bottom:16px}
+.price b{font-size:1.3rem}
+.prose{max-width:760px;padding:26px 22px 30px;color:var(--ink-dark);line-height:2}
+.prose .section-title{color:var(--ink-dark)}
+.prose .section-title::after{background:linear-gradient(90deg,var(--navy),#8b8ac2)}
+.prose p{margin-bottom:1.2em;font-size:.95rem}
+.prose img{box-shadow:var(--shadow)}
+.prose + .btn-row{margin-top:30px}
+.others{display:flex;flex-wrap:wrap;justify-content:center;gap:10px}
+.others a{font-size:.85rem;padding:5px 12px;text-decoration:none;color:var(--ink-dark)}
 
 /* ---------- 表 ---------- */
-.table{width:100%;border-collapse:collapse;background:var(--white);border-radius:var(--radius);overflow:hidden}
-.table th,.table td{padding:12px 14px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}
-.table th{background:#f2eee5;font-weight:700;width:45%}
-.table td{font-weight:700}
+.table{width:100%;border-collapse:separate;border-spacing:0;overflow:hidden}
+.table caption{color:#fff;font-weight:500!important}
+.table th,.table td{padding:13px 14px;border-bottom:1px solid #e6e6e6;text-align:left;vertical-align:top}
+.table th{font-weight:500;width:50%;color:var(--ink-dark)}
+.table td{font-weight:800;color:var(--navy)}
+.table td .note{color:var(--ink)}
 .table tr:last-child th,.table tr:last-child td{border-bottom:0}
+.table a{color:var(--navy)}
 
 /* ---------- その他 ---------- */
-.grid-2{display:grid;gap:16px}
-@media (min-width:760px){.grid-2{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}}
-.photo-row{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
-.photo-row img{border-radius:10px;width:100%;aspect-ratio:4/3;object-fit:cover}
-.photo-row figcaption{font-size:13px;color:var(--ink-soft);margin-top:4px}
-.map{width:100%;aspect-ratio:4/3;border:0;border-radius:var(--radius)}
-.info-list{display:grid;grid-template-columns:auto 1fr;gap:6px 16px}
-.info-list dt{font-weight:700}
-.value-list{display:grid;gap:12px}
-.value-list li{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.15);border-radius:var(--radius);padding:16px}
-.value-list b{font-family:"Shippori Mincho",serif;font-size:20px;color:var(--gold-soft);display:block}
+.grid-2{display:grid;gap:22px}
+@media (min-width:769px){.grid-2{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}}
+.photo-row{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+.photo-row img{width:100%;aspect-ratio:4/3;object-fit:cover;box-shadow:var(--shadow)}
+.photo-row figcaption{font-size:.8rem;margin-top:6px;color:#fff!important}
+.map{width:100%;aspect-ratio:4/3;border:0}
+.info-list{display:grid;grid-template-columns:auto 1fr;gap:8px 16px;padding:20px;color:var(--ink-dark);font-size:.92rem}
+.info-list dt{font-weight:800}
+.info-list a{color:var(--navy)}
+.value-list{display:grid;gap:14px}
+.value-list li{border:1px solid rgba(255,255,255,.35);border-radius:var(--radius);padding:18px;background:rgba(3,4,69,.45)}
+.value-list b{display:block;font-size:1.2rem;font-weight:800;margin-bottom:4px}
 
-/* ---------- フッター ---------- */
-.site-footer{background:var(--night);color:#cfcae8;padding:40px 0 28px;font-size:14px}
-.site-footer a{color:#fff}
-.footer-name{font-family:"Shippori Mincho",serif;font-size:20px;color:#fff;font-weight:800;margin-bottom:6px}
+/* ---------- フッター(今のHPと同じ白) ---------- */
+.site-footer{background:#fff;color:var(--ink);border-top:1px solid #ccc;padding-top:44px;text-align:center;font-size:.85rem}
+.site-footer a{color:var(--ink)}
+.footer-name{font-size:1.3rem;color:var(--ink-dark);margin-bottom:8px}
 .site-footer address{font-style:normal;margin-bottom:10px}
-.footer-info{display:grid;grid-template-columns:auto 1fr;gap:2px 14px;margin-bottom:18px}
-.footer-links{display:flex;flex-wrap:wrap;gap:6px 16px;margin-bottom:18px}
-.copy{font-size:12px;opacity:.7}
+.footer-info{display:inline-grid;grid-template-columns:auto auto;gap:2px 14px;margin-bottom:18px;text-align:left}
+.footer-links{display:flex;flex-wrap:wrap;justify-content:center;gap:4px 16px;margin-bottom:18px;line-height:2.4}
+.copy{font-size:.7rem}
